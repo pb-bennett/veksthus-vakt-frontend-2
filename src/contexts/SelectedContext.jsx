@@ -5,7 +5,7 @@ import { createContext, useState } from "react";
 const SelectedContext = createContext();
 
 export function SelectedProvider({ children }) {
-  const [selected, setSelected] = useState("Sensors");
+  const [selected, setSelected] = useState("Overview");
 
   return (
     <SelectedContext.Provider value={{ selected, setSelected }}>

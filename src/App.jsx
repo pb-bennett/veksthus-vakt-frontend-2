@@ -11,7 +11,7 @@ import ModalMenu from "./components/OverlayMenu/ModalMenu";
 
 function App() {
   const { expanded, setExpanded, setEnabled, overlayMenu } = useExpanded(true);
-  const { user, setUser, setData, setIsLoading } = useData();
+  const { user, setUser, setIsLoading } = useData();
 
   const [loading, setLoading] = useState(false);
   const apiUrl = import.meta.env.VITE_API_URL;
@@ -53,69 +53,50 @@ function App() {
     }
   }, []);
 
-  useEffect(() => {
-    if (!user) setEnabled(false);
-    if (user) {
-      const fetchData = async () => {
-        try {
-          if (!user) return;
-          const units = user.units;
-          setLoading(true);
-          setIsLoading(true);
-          const token = localStorage.getItem("token");
-          const response = await fetch(
-            `${apiUrl}/handshake/${units[0].unitId}/`,
-            {
-              method: "GET",
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
-            },
-          );
-          const data = await response.json();
-          const sortedSensors = data.data.sensors.sensorDetails.sort((a, b) => {
-            return a.sensorLocation.localeCompare(b.sensorLocation);
-          });
-          const sortedData = {
-            ...data.data,
-            sensors: {
-              ...data.data.sensors,
-              sensorDetails: sortedSensors,
-            },
-          };
+  // useEffect(() => {
+  //   if (!user) setEnabled(false);
+  //   if (user) {
+  //     const fetchInitialData = async () => {
+  //       try {
+  //         if (!user) return;
+  //         const units = user.units;
+  //         setLoading(true);
+  //         setIsLoading(true);
+  //         const token = localStorage.getItem("token");
+  //         const response = await fetch(
+  //           `${apiUrl}/handshake/${units[0].unitId}/`,
+  //           {
+  //             method: "GET",
+  //             headers: {
+  //               Authorization: `Bearer ${token}`,
+  //             },
+  //           },
+  //         );
+  //         const data = await response.json();
+  //         const sortedSensors = data.data.sensors.sensorDetails.sort((a, b) => {
+  //           return a.sensorLocation.localeCompare(b.sensorLocation);
+  //         });
+  //         const sortedData = {
+  //           ...data.data,
+  //           sensors: {
+  //             ...data.data.sensors,
+  //             sensorDetails: sortedSensors,
+  //           },
+  //         };
 
-          setData(sortedData);
+  //         setData(sortedData);
 
-          // const defaultSensorChart = {
-          //   includedSensors: data.data.sensors.sensorDetails.map((sensor) => {
-          //     return {
-          //       id: sensor.sensorId,
-          //       label: sensor.sensorLocation,
-          //       color: sensor.color,
-          //     };
-          //   }),
-          //   endTime: new Date(
-          //     data.data.sensors.timeSeriesData[0].time,
-          //   ).toISOString(),
-
-          //   startTime: new Date(
-          //     data.data.sensors.timeSeriesData[
-          //       data.data.sensors.timeSeriesData.length - 1
-          //     ].time,
-          //   ).toISOString(),
-          // };
-          // setCurrentSensorCharts([defaultSensorChart]);
-          setLoading(false);
-          setIsLoading(false);
-        } catch (error) {
-          setLoading(false);
-          setIsLoading(false);
-          console.error(error);
-        }
-      };
-      fetchData();
-    }
-  }, [user]);
+  //         setLoading(false);
+  //         setIsLoading(false);
+  //       } catch (error) {
+  //         setLoading(false);
+  //         setIsLoading(false);
+  //         console.error(error);
+  //       }
+  //     };
+  //     fetchInitialData();
+  //   }
+  // }, [user]);
 
   return (
     <>

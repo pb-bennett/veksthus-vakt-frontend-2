@@ -1,3 +1,23 @@
+const getLastNDaysTimestamps = (days) => {
+  const endTime = Math.floor(Date.now() / 1000); // Convert to seconds
+  const startTime = endTime - days * 24 * 60 * 60; // Subtract 7 days (in seconds)
+  return {
+    startTime,
+    endTime,
+  };
+};
+
+const getMinMaxAvg = (data) => {
+  if (data.length === 0) return { min: null, max: null, avg: null };
+
+  const temps = data.map((reading) => parseFloat(reading.temp));
+  const min = Math.min(...temps);
+  const max = Math.max(...temps);
+  const avg = temps.reduce((sum, temp) => sum + temp, 0) / temps.length;
+
+  return { min, max, avg };
+};
+
 const formatLocation = (location) => {
   return location
     .split("-")
@@ -81,4 +101,11 @@ const sensorColorAssigner = (sensorArray) => {
   return colorSortedArray;
 };
 
-export { colorGrader, sensorColorAssigner, formatLocation, formatTime };
+export {
+  colorGrader,
+  sensorColorAssigner,
+  formatLocation,
+  formatTime,
+  getLastNDaysTimestamps,
+  getMinMaxAvg,
+};

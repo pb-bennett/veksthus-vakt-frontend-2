@@ -1,6 +1,6 @@
 import { useData } from "../../hooks/useData";
 
-import WeatherOverview from "../Weather/WeatherOverview";
+import WeatherOverview from "../Overview/WeatherOverview";
 
 function Weather() {
   const { data } = useData();

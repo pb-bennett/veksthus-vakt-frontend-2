@@ -85,7 +85,7 @@ export const TABLE_CONSTANTS = [
         label: "Type",
         accessor: "sensor_type",
         sortable: true,
-        span: 1,
+        span: 2,
       },
       {
         id: "is_active",
