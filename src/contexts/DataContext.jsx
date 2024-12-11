@@ -2,6 +2,7 @@ import PropTypes from "prop-types";
 import { createContext, useState, useEffect } from "react";
 
 import { getLastNDaysTimestamps, getMinMaxAvg } from "../utils/utils";
+import { se } from "date-fns/locale";
 
 const DataContext = createContext();
 
@@ -138,9 +139,9 @@ export function DataProvider({ children }) {
         );
 
         tempSensorStats[sensorId] = {
-          Days7: getMinMaxAvg(sensorDataDay7),
-          Days3: getMinMaxAvg(sensorDataDay3),
-          Days1: getMinMaxAvg(sensorDataDay1),
+          days7: getMinMaxAvg(sensorDataDay7),
+          days3: getMinMaxAvg(sensorDataDay3),
+          days1: getMinMaxAvg(sensorDataDay1),
         };
       });
       setTempReadingsStats(tempSensorStats);

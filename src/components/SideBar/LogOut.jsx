@@ -8,12 +8,13 @@ export default function LogOut() {
   const { expanded, enabled, setExpanded, setOverlayMenu } = useExpanded();
   const { setSelected } = useSelected();
 
-  const { setData, setUser } = useData();
+  const { setUser, setTempReadingsData, setTempReadingsStats } = useData();
 
   const logoutHandler = () => {
     localStorage.removeItem("token");
     setUser(null);
-    setData(null);
+    setTempReadingsData({});
+    setTempReadingsStats({});
     setExpanded(false);
     setOverlayMenu(false);
     setSelected(null);

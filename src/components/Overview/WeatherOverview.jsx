@@ -7,7 +7,7 @@ import { te } from "date-fns/locale";
 function WeatherOverview() {
   const { tempReadingsStats, tempReadingsData, isLoading } = useData();
   // const [weather6Days, setWeather6Days] = useState([]);
-  console.log(tempReadingsStats);
+  // console.log(tempReadingsStats);
   // useEffect(() => {
   //   if (data) {
   //     const today = new Date();
