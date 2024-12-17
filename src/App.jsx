@@ -102,7 +102,7 @@ function App() {
     <>
       {overlayMenu && <ModalMenu />}
       <div className="h-full border bg-gray-100">
-        <div className="mx-auto max-w-screen-xl">
+        <div className="mx-auto max-w-screen-2xl">
           <div
             className={`grid bg-stone-50 text-stone-800 transition-all ${expanded ? "lg:grid-cols-[15rem,_1fr]" : "lg:grid-cols-[4.4rem,_1fr]"} `}
           >

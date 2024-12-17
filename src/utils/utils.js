@@ -1,3 +1,14 @@
+// dataUtils.js
+const downsampleData = (data, targetPoints) => {
+  if (data.length <= targetPoints) return data; // No reduction needed if data is small enough
+
+  const step = data.length / targetPoints; // Calculate step size
+  return Array.from(
+    { length: targetPoints },
+    (_, i) => data[Math.floor(i * step)],
+  );
+};
+
 const getLastNDaysTimestamps = (days) => {
   const endTime = Math.floor(Date.now() / 1000); // Convert to seconds
   const startTime = endTime - days * 24 * 60 * 60; // Subtract 7 days (in seconds)
@@ -108,4 +119,5 @@ export {
   formatTime,
   getLastNDaysTimestamps,
   getMinMaxAvg,
+  downsampleData,
 };

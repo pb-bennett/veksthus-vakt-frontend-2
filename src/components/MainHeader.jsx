@@ -28,7 +28,7 @@ function MainHeader() {
   }, []);
 
   return (
-    <div className="z-20 flex w-full select-none bg-stone-100 px-4 py-1 shadow lg:pb-4 lg:pt-5">
+    <div className="z-20 flex w-full select-none bg-stone-100 px-4 py-1 shadow lg:pb-2 lg:pt-2">
       <button
         className="mr-2 flex size-10 items-center justify-center rounded-md border-2 hover:bg-stone-200 lg:hidden"
         onClick={() => setOverlayMenu(true)}
