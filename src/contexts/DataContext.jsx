@@ -2,7 +2,6 @@ import PropTypes from "prop-types";
 import { createContext, useState, useEffect } from "react";
 
 import { getLastNDaysTimestamps, getMinMaxAvg } from "../utils/utils";
-import { se } from "date-fns/locale";
 
 const DataContext = createContext();
 
@@ -37,8 +36,9 @@ export function DataProvider({ children }) {
     }
   };
 
-  const returnTempReadingsData = async ({ startTime, endTime, sensors }) => {
+  const returnTempReadingsData = async ({ period, sensors }) => {
     try {
+      const { startTime, endTime } = period;
       const fetchPromises = sensors
         .map((sensor) => {
           // Check if the tempReadingsData for the sensor already has data for the startTime
@@ -97,7 +97,7 @@ export function DataProvider({ children }) {
 
   useEffect(() => {
     if (user && Object.keys(tempReadingsData).length === 0) {
-      const { startTime, endTime } = getLastNDaysTimestamps(7);
+      const { startTime, endTime } = getLastNDaysTimestamps(30);
 
       const loadInitialData = async () => {
         try {

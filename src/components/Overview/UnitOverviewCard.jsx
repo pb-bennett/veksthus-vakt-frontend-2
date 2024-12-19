@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
+import PropTypes from "prop-types";
 
 import SensorOverviewCard from "./SensorOverviewCard";
 import LoadingSpinner from "../LoadingSpinner";
 import { useData } from "../../hooks/useData";
 const UnitOverviewCard = ({ unitId }) => {
-  const { tempReadingsData, isLoading, user } = useData();
+  const { tempReadingsData, user } = useData();
   const [unit, setUnit] = useState({});
   const [loading, setLoading] = useState(true);
 
@@ -44,4 +45,9 @@ const UnitOverviewCard = ({ unitId }) => {
     </div>
   );
 };
+
+UnitOverviewCard.propTypes = {
+  unitId: PropTypes.string,
+};
+
 export default UnitOverviewCard;

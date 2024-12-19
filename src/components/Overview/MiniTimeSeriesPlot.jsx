@@ -1,9 +1,15 @@
 import ReactECharts from "echarts-for-react";
+import PropTypes from "prop-types";
+import { Expand } from "lucide-react";
 
 import { colorGrader, formatLocation } from "../../utils/utils";
 
 const MiniTimeSeriesPlot = ({ data, sensor, type }) => {
-  console.log(sensor, type);
+  if (
+    sensor.location === "outside-(air)" ||
+    sensor.location === "outside-(soil)"
+  )
+    console.log(sensor.location, data[0]);
   const breakpoints = [-15, -5, 0, 5, 10, 15, 20, 25, 30, 35, 45];
   const colorRange = [
     "rgba(1, 92, 251, 0.8)", // Deep blue
@@ -22,8 +28,26 @@ const MiniTimeSeriesPlot = ({ data, sensor, type }) => {
 
   // Transform data into [time, temp] format and convert time to milliseconds
   const formattedData = data.map((entry) => [entry.time * 1000, entry.temp]);
+  const min = Math.min(...formattedData.map((entry) => entry[1]));
+  const max = Math.max(...formattedData.map((entry) => entry[1]));
+  const avg =
+    formattedData.reduce((sum, entry) => sum + entry[1], 0) / data.length;
+  console.log(min, max, avg);
+  const typeTitle =
+    type === "24h" ? "24 hour" : type === "7d" ? "7 day" : "30 day";
 
   const option = {
+    title: {
+      text: typeTitle,
+      top: 2,
+      left: "center",
+      textStyle: {
+        color: "#57534e", // Title color
+        fontSize: 14, // Main title font size
+        fontWeight: "normal", // Font weight
+        fontFamily: "Noto Sans, sans-serif", // Font family
+      },
+    },
     tooltip: {
       trigger: "axis",
       axisPointer: { type: "line" },
@@ -45,19 +69,34 @@ const MiniTimeSeriesPlot = ({ data, sensor, type }) => {
             padding: 6px; 
             border-radius: 4px;
             font-size: 0.8rem;
+            line-height: 1.4;
           "
         >
-        <p style="font-size: 0.8rem; margin: 0;">
-        ${formattedTime}
-        </p>
-          <span>${formatLocation(sensor.location)}:</span> ${temperature}°C<br />
+          <div style="font-size: 1rem; margin: 0; font-weight: bold;">
+            ${formatLocation(sensor.location)}
+          </div>
+          <div style="font-size: 0.8rem; margin: 0; font-weight: bold;">
+            ${formattedTime}
+          </div>
+          <div style="font-size: 0.8rem; font-weight: bold; margin: 0;">
+            temp: ${temperature}°C
+          </div>
+          <div style="font-size: 0.8rem; margin: 0;">
+            avg: ${avg.toFixed(1)}°C
+          </div>
+          <div style="font-size: 0.8rem; margin: 0;">
+            min: ${min.toFixed(1)}°C
+          </div>
+          <div style="font-size: 0.8rem; margin: 0;">
+             max: ${max.toFixed(1)}°C
+          </div>
         </div>
       `;
       },
     },
     grid: {
-      top: 10,
-      bottom: 10,
+      top: 25,
+      bottom: 5,
       left: 0,
       right: 20,
       containLabel: true,
@@ -83,8 +122,6 @@ const MiniTimeSeriesPlot = ({ data, sensor, type }) => {
         color: colorRange,
       },
       show: false,
-      left: "-9999px",
-      top: "-9999px",
     },
     series: [
       {
@@ -103,12 +140,33 @@ const MiniTimeSeriesPlot = ({ data, sensor, type }) => {
   };
 
   return (
-    <ReactECharts
-      className="rounded-md border bg-stone-50"
-      option={option}
-      style={{ height: "75px", width: "100%", padding: "0", margin: "0" }}
-    />
+    <div className="relative h-full w-full">
+      <ReactECharts
+        className="rounded-md bg-stone-50"
+        option={option}
+        style={{
+          height: "100%",
+          width: "100%",
+          padding: "0",
+          margin: "0",
+          border: `2px solid ${colorGrader(data.map((entry) => entry.temp).reduce((a, b) => a + b / data.length, 0))}`, // Dynamically colored border
+          borderRadius: "6px", // Optional rounded corners
+        }}
+      />
+      <button
+        className="absolute right-1 top-1 rounded-sm p-1 text-stone-500 shadow hover:bg-stone-100"
+        onClick={() => console.log("Button clicked!")}
+      >
+        <Expand size={10} />
+      </button>
+    </div>
   );
+};
+
+MiniTimeSeriesPlot.propTypes = {
+  data: PropTypes.array.isRequired,
+  sensor: PropTypes.object.isRequired,
+  type: PropTypes.string.isRequired,
 };
 
 export default MiniTimeSeriesPlot;

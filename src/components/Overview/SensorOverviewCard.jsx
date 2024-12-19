@@ -13,9 +13,14 @@ import {
 import { useData } from "../../hooks/useData";
 
 const SensorOverviewCard = ({ sensorId }) => {
-  const { tempReadingsData, tempReadingsStats, user, isLoading } = useData();
+  const {
+    tempReadingsData,
+    tempReadingsStats,
+    user,
+    isLoading,
+    returnTempReadingsData,
+  } = useData();
   const [sensor, setSensor] = useState(null);
-  const [plotData, setPlotData] = useState(null);
   const [loading, setLoading] = useState();
 
   useEffect(() => {
@@ -31,7 +36,7 @@ const SensorOverviewCard = ({ sensorId }) => {
       .flatMap((unit) => unit.sensors)
       .find((sensor) => sensor.sensorId === sensorId);
     const tempReadings = tempReadingsData[sensorId].filter(
-      (reading) => reading.time > getLastNDaysTimestamps(7).startTime,
+      (reading) => reading.time > getLastNDaysTimestamps(30).startTime,
     );
 
     setSensor({
@@ -44,14 +49,15 @@ const SensorOverviewCard = ({ sensorId }) => {
   if (loading || !sensor || isLoading) return <LoadingSpinner />;
   return (
     <li className="flex flex-col items-center rounded-md border bg-stone-100 shadow-sm">
-      <p className="sm:text-md w-full border-b text-center text-sm">
-        {formatLocation(sensor.location)}
-      </p>
-      <div className="grid w-full grid-cols-12 items-center gap-1 p-1">
-        <div className="col-span-2 flex flex-col items-center rounded-md border p-1">
-          <p className="text-sm">Current</p>
+      <div className="flex w-full">
+        <p className="sm:text-md ml-2 w-full border-b text-sm font-bold">
+          {formatLocation(sensor.location)}
+        </p>
+      </div>
+      <div className="grid h-28 w-full grid-cols-12 items-center gap-1 p-1 lg:grid-cols-10">
+        <div className="col-span-2 flex h-full flex-col items-center rounded-md border p-1 lg:col-span-1">
           <div
-            className={`flex size-20 items-center justify-center rounded-md border-2 bg-stone-50`}
+            className={`flex h-full w-full flex-col items-center justify-start rounded-md border-2 bg-stone-50`}
             style={{
               borderColor: colorGrader(
                 sensor.tempReadings[sensor.tempReadings.length - 1].temp,
@@ -59,7 +65,11 @@ const SensorOverviewCard = ({ sensorId }) => {
               borderWidth: "3px",
             }}
           >
-            <p className="flex items-start text-stone-500">
+            {/* Current label at the top */}
+            <p className="text-sm">Current</p>
+
+            {/* Temperature centered in remaining space */}
+            <p className="mb-2 flex flex-1 items-center justify-center text-stone-500">
               <span className="text-lg font-semibold sm:text-xl">
                 {sensor.tempReadings[
                   sensor.tempReadings.length - 1
@@ -69,8 +79,8 @@ const SensorOverviewCard = ({ sensorId }) => {
             </p>
           </div>
         </div>
-        <div className="col-span-5 flex h-full flex-col items-center rounded-md border p-1">
-          <p className="text-sm">24 Hours</p>
+        <div className="col-span-5 flex h-full flex-col items-center rounded-md border p-1 lg:col-span-3">
+          {/* <p className="text-sm">24 Hours</p> */}
           <MiniTimeSeriesPlot
             type="24h"
             sensor={sensor}
@@ -82,14 +92,28 @@ const SensorOverviewCard = ({ sensorId }) => {
             )}
           />
         </div>
-        <div className="col-span-5 flex h-full flex-col items-center rounded-md border p-1">
-          <p className="text-sm">7 Days</p>
+        <div className="col-span-5 flex h-full flex-col items-center rounded-md border p-1 lg:col-span-3">
+          {/* <p className="text-sm">7 Days</p> */}
           <MiniTimeSeriesPlot
             type="7d"
             sensor={sensor}
             data={downsampleData(
               sensor.tempReadings.filter(
                 (reading) => reading.time > getLastNDaysTimestamps(7).startTime,
+              ),
+              48,
+            )}
+          />
+        </div>
+        <div className="col-span-5 hidden h-full flex-col items-center rounded-md border p-1 lg:col-span-3 lg:flex">
+          {/* <p className="text-sm">7 Days</p> */}
+          <MiniTimeSeriesPlot
+            type="30d"
+            sensor={sensor}
+            data={downsampleData(
+              sensor.tempReadings.filter(
+                (reading) =>
+                  reading.time > getLastNDaysTimestamps(30).startTime,
               ),
               48,
             )}
