@@ -148,6 +148,107 @@ export function DataProvider({ children }) {
     }
   }, [tempReadingsData]);
 
+  useEffect(() => {
+    if (user) {
+      const fetchDataAfterDelay = async () => {
+        const sensors = user.units[0].sensors.map((sensor) => sensor.sensorId);
+
+        // Get the current time
+        const now = new Date();
+
+        // Calculate the next 15-minute mark (on the hour, quarter past, half past, or quarter to the hour)
+        const minutes = now.getMinutes();
+        const remainder = minutes % 15;
+        const delayToNextFetch = (15 - remainder) * 60 * 1000 + 2 * 60 * 1000; // Add 2-minute offset
+
+        // Calculate startTime and endTime for fetching
+        const startTime = now.getTime() - 15 * 60 * 1000; // Last 15 minutes
+        const endTime = now.getTime(); // Current time
+
+        // Fetch after the calculated delay
+        setTimeout(async () => {
+          try {
+            const data = await fetchData({
+              startTime: Math.floor(startTime / 1000),
+              endTime: Math.floor(endTime / 1000),
+              sensors,
+            });
+
+            if (data) {
+              // Update state with the fetched readings
+              setTempReadingsData((prevData) => {
+                const updatedData = { ...prevData };
+
+                // Merge the fetched data into the existing data
+                sensors.forEach((sensorId) => {
+                  if (data[sensorId]) {
+                    if (!updatedData[sensorId]) {
+                      updatedData[sensorId] = [];
+                    }
+                    // Add new readings to the existing data
+                    updatedData[sensorId] = [
+                      ...updatedData[sensorId],
+                      ...data[sensorId],
+                    ];
+                  }
+                });
+
+                return updatedData;
+              });
+            }
+          } catch (error) {
+            console.error("Error fetching latest data:", error);
+          }
+        }, delayToNextFetch); // First fetch after the delay
+
+        // Set the interval to fetch data every 15 minutes
+        const intervalId = setInterval(
+          async () => {
+            console.log("running interval fetch");
+            try {
+              const data = await fetchData({
+                startTime: Math.floor(startTime / 1000),
+                endTime: Math.floor(endTime / 1000),
+                sensors,
+              });
+              console.log(data);
+              if (data) {
+                // Update state with the fetched readings
+                setTempReadingsData((prevData) => {
+                  const updatedData = { ...prevData };
+
+                  // Merge the fetched data into the existing data
+                  sensors.forEach((sensorId) => {
+                    if (data[sensorId]) {
+                      if (!updatedData[sensorId]) {
+                        updatedData[sensorId] = [];
+                      }
+                      // Add new readings to the existing data
+                      updatedData[sensorId] = [
+                        ...updatedData[sensorId],
+                        ...data[sensorId],
+                      ];
+                    }
+                  });
+
+                  return updatedData;
+                });
+              }
+            } catch (error) {
+              console.error("Error fetching latest data:", error);
+            }
+          },
+          15 * 60 * 1000,
+        ); // 15-minute interval
+
+        // Cleanup the interval on component unmount
+        return () => clearInterval(intervalId);
+      };
+
+      fetchDataAfterDelay();
+    }
+  }, [user]); // Runs when `user` changes // Runs when `user` changes
+
   return (
     <DataContext.Provider
       value={{

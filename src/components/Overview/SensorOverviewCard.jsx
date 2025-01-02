@@ -22,6 +22,13 @@ const SensorOverviewCard = ({ sensorId }) => {
   } = useData();
   const [sensor, setSensor] = useState(null);
   const [loading, setLoading] = useState();
+  const [isLargeScreen, setIsLargeScreen] = useState(window.innerWidth >= 1024);
+
+  useEffect(() => {
+    const handleResize = () => setIsLargeScreen(window.innerWidth >= 1024);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   useEffect(() => {
     if (
@@ -55,7 +62,7 @@ const SensorOverviewCard = ({ sensorId }) => {
         </p>
       </div>
       <div className="grid h-28 w-full grid-cols-12 items-center gap-1 p-1 lg:grid-cols-10">
-        <div className="col-span-2 flex h-full flex-col items-center rounded-md border p-1 lg:col-span-1">
+        <div className="col-span-2 flex h-full flex-col items-center rounded-md p-1 lg:col-span-1">
           <div
             className={`flex h-full w-full flex-col items-center justify-start rounded-md border-2 bg-stone-50`}
             style={{
@@ -107,17 +114,19 @@ const SensorOverviewCard = ({ sensorId }) => {
         </div>
         <div className="col-span-5 hidden h-full flex-col items-center rounded-md border p-1 lg:col-span-3 lg:flex">
           {/* <p className="text-sm">7 Days</p> */}
-          <MiniTimeSeriesPlot
-            type="30d"
-            sensor={sensor}
-            data={downsampleData(
-              sensor.tempReadings.filter(
-                (reading) =>
-                  reading.time > getLastNDaysTimestamps(30).startTime,
-              ),
-              48,
-            )}
-          />
+          {isLargeScreen && (
+            <MiniTimeSeriesPlot
+              type="30d"
+              sensor={sensor}
+              data={downsampleData(
+                sensor.tempReadings.filter(
+                  (reading) =>
+                    reading.time > getLastNDaysTimestamps(30).startTime,
+                ),
+                48,
+              )}
+            />
+          )}
         </div>
       </div>
     </li>

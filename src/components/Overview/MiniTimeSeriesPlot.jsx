@@ -5,11 +5,6 @@ import { Expand } from "lucide-react";
 import { colorGrader, formatLocation } from "../../utils/utils";
 
 const MiniTimeSeriesPlot = ({ data, sensor, type }) => {
-  if (
-    sensor.location === "outside-(air)" ||
-    sensor.location === "outside-(soil)"
-  )
-    console.log(sensor.location, data[0]);
   const breakpoints = [-15, -5, 0, 5, 10, 15, 20, 25, 30, 35, 45];
   const colorRange = [
     "rgba(1, 92, 251, 0.8)", // Deep blue
@@ -32,7 +27,7 @@ const MiniTimeSeriesPlot = ({ data, sensor, type }) => {
   const max = Math.max(...formattedData.map((entry) => entry[1]));
   const avg =
     formattedData.reduce((sum, entry) => sum + entry[1], 0) / data.length;
-  console.log(min, max, avg);
+
   const typeTitle =
     type === "24h" ? "24 hour" : type === "7d" ? "7 day" : "30 day";
 
@@ -81,14 +76,17 @@ const MiniTimeSeriesPlot = ({ data, sensor, type }) => {
           <div style="font-size: 0.8rem; font-weight: bold; margin: 0;">
             temp: ${temperature}°C
           </div>
-          <div style="font-size: 0.8rem; margin: 0;">
+          <div style="border: 1px solid #57534e; border-radius: 4px; padding: 0.3rem; margin: 0; font-size: 0.7rem ">
+            <div style="font-weight: bold;">${typeTitle} stats</div>
+            <div style=" margin: 0;">
             avg: ${avg.toFixed(1)}°C
-          </div>
-          <div style="font-size: 0.8rem; margin: 0;">
+            </div>
+            <div style=" margin: 0;">
             min: ${min.toFixed(1)}°C
-          </div>
-          <div style="font-size: 0.8rem; margin: 0;">
-             max: ${max.toFixed(1)}°C
+            </div>
+            <div style=" margin: 0;">
+            max: ${max.toFixed(1)}°C
+            </div>
           </div>
         </div>
       `;
